@@ -51,6 +51,9 @@
 
             app.UseRouting();
 
+            // Add Basic Authentication Middleware
+            app.UseMiddleware<Middleware.BasicAuthenticationMiddleware>();
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
