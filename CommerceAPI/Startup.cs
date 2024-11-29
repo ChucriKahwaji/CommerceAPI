@@ -1,10 +1,23 @@
-﻿namespace CommerceAPI
+﻿using log4net.Config;
+using log4net;
+
+namespace CommerceAPI
 {
     public class Startup
     {
+        private readonly ILog _logger;
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
+            // Configure log4net
+            var logRepository = LogManager.GetRepository(System.Reflection.Assembly.GetEntryAssembly());
+            XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
+
+            // Initialize the logger for the Startup class
+            _logger = LogManager.GetLogger(typeof(Startup));
+            _logger.Info("Application is starting...");
         }
 
         public IConfiguration Configuration { get; }
@@ -51,6 +64,8 @@
 
             app.UseRouting();
 
+            _logger.Info("Configuring middleware pipeline...");
+
             // Add Basic Authentication Middleware
             app.UseMiddleware<Middleware.BasicAuthenticationMiddleware>();
 
@@ -60,6 +75,8 @@
             {
                 endpoints.MapControllers();
             });
+
+            _logger.Info("Application has started.");
         }
 
     }
