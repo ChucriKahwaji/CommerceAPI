@@ -1,5 +1,6 @@
 ﻿using log4net.Config;
 using log4net;
+using Microsoft.OpenApi.Models;
 
 namespace CommerceAPI
 {
@@ -38,6 +39,31 @@ namespace CommerceAPI
                     Version = "v1",
                     Description = "A simple API for managing products, orders, and customers."
                 });
+                // Add Basic Authentication to Swagger
+                options.AddSecurityDefinition("basic", new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "basic",
+                    In = ParameterLocation.Header,
+                    Description = "Enter your username and password as 'Basic <Base64(username:password)>'"
+                });
+
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "basic"
+                            }
+                        },
+                        new string[] { }
+                    }
+                });
+
             });
         }
 
