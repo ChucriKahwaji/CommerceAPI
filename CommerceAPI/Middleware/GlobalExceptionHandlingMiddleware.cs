@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using API.Exceptions;
+using System.Net;
 using System.Text.Json;
 
 namespace API.Middleware
@@ -26,21 +27,31 @@ namespace API.Middleware
 
         private async Task HandleExceptionAsync(HttpContext context, Exception ex)
         {
-            // Log the exception
             var correlationId = context.Items["CorrelationId"]?.ToString();
             var logger = context.RequestServices.GetService<ILogger<GlobalExceptionHandlingMiddleware>>();
             logger?.LogError(ex, "An error occurred. CorrelationId: {CorrelationId}", correlationId);
 
-            // Return a structured error response
+            int statusCode = ex switch
+            {
+                NotFoundException => StatusCodes.Status404NotFound,
+                ValidationException => StatusCodes.Status400BadRequest,
+                _ => StatusCodes.Status500InternalServerError
+            };
+
             var errorResponse = new
             {
                 CorrelationId = correlationId,
-                Message = "An unexpected error occurred. Please contact support with the provided Correlation ID.",
-                Details = ex.Message // Avoid exposing sensitive details in production
+                StatusCode = statusCode,
+                Message = ex switch
+                {
+                    NotFoundException => ex.Message,
+                    ValidationException => ex.Message,
+                    _ => "An unexpected error occurred. Please contact support with the provided Correlation ID."
+                }
             };
 
             context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            context.Response.StatusCode = statusCode;
 
             await context.Response.WriteAsync(JsonSerializer.Serialize(errorResponse));
         }
