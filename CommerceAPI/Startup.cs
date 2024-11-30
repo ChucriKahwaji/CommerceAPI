@@ -1,9 +1,8 @@
-﻿using log4net.Config;
-using log4net;
+﻿using log4net;
+using log4net.Config;
 using Microsoft.OpenApi.Models;
-using API;
 
-namespace CommerceAPI
+namespace API
 {
     public class Startup
     {

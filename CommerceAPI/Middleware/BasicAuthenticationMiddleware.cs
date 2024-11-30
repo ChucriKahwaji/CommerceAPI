@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace CommerceAPI.Middleware
+namespace API.Middleware
 {
     public class BasicAuthenticationMiddleware
     {

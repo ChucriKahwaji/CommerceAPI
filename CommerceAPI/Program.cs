@@ -1,7 +1,7 @@
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container using Startup.cs
-var startup = new CommerceAPI.Startup(builder.Configuration);
+var startup = new API.Startup(builder.Configuration);
 startup.ConfigureServices(builder.Services);
 
 var app = builder.Build();
