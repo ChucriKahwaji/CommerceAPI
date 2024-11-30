@@ -35,6 +35,9 @@ namespace API.Middleware
             {
                 NotFoundException => StatusCodes.Status404NotFound,
                 ValidationException => StatusCodes.Status400BadRequest,
+                UnauthorizedException => StatusCodes.Status401Unauthorized,
+                ForbiddenException => StatusCodes.Status403Forbidden,
+                ConflictException => StatusCodes.Status409Conflict,
                 _ => StatusCodes.Status500InternalServerError
             };
 
@@ -46,6 +49,9 @@ namespace API.Middleware
                 {
                     NotFoundException => ex.Message,
                     ValidationException => ex.Message,
+                    UnauthorizedException => ex.Message,
+                    ForbiddenException => ex.Message,
+                    ConflictException => ex.Message,
                     _ => "An unexpected error occurred. Please contact support with the provided Correlation ID."
                 }
             };
