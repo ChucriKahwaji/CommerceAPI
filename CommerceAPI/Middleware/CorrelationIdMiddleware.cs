@@ -1,7 +1,6 @@
-﻿using API;
-using log4net;
+﻿using log4net;
 
-namespace CommerceAPI.Middleware
+namespace API.Middleware
 {
     public class CorrelationIdMiddleware
     {
