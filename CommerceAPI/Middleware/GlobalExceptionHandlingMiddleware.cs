@@ -29,6 +29,8 @@ namespace API.Middleware
         {
             var correlationId = context.Items["CorrelationId"]?.ToString();
             var logger = context.RequestServices.GetService<ILogger<GlobalExceptionHandlingMiddleware>>();
+            var env = context.RequestServices.GetService<IWebHostEnvironment>();
+
             logger?.LogError(ex, "An error occurred. CorrelationId: {CorrelationId}", correlationId);
 
             int statusCode = ex switch
@@ -41,7 +43,7 @@ namespace API.Middleware
                 _ => StatusCodes.Status500InternalServerError
             };
 
-            var errorResponse = new
+            var errorResponse = new ErrorResponse
             {
                 CorrelationId = correlationId,
                 StatusCode = statusCode,
@@ -49,11 +51,9 @@ namespace API.Middleware
                 {
                     NotFoundException => ex.Message,
                     ValidationException => ex.Message,
-                    UnauthorizedException => ex.Message,
-                    ForbiddenException => ex.Message,
-                    ConflictException => ex.Message,
                     _ => "An unexpected error occurred. Please contact support with the provided Correlation ID."
-                }
+                },
+                StackTrace = env.IsDevelopment() ? ex.StackTrace : null // Only include stack trace in Development
             };
 
             context.Response.ContentType = "application/json";
