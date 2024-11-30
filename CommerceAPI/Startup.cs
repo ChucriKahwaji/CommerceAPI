@@ -88,6 +88,10 @@ namespace API
                     options.SwaggerEndpoint("/swagger/v1/swagger.json", "CommerceAPI v1");
                 });
             }
+            else
+            {
+                app.UseMiddleware<Middleware.GlobalExceptionHandlingMiddleware>();
+            }
 
             app.UseHttpsRedirection();
 
