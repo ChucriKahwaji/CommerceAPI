@@ -1,6 +1,7 @@
 ﻿using log4net.Config;
 using log4net;
 using Microsoft.OpenApi.Models;
+using API;
 
 namespace CommerceAPI
 {
@@ -65,6 +66,9 @@ namespace CommerceAPI
                 });
 
             });
+
+            // Register IHttpContextAccessor and CorrelationIdAccessor
+            services.AddHttpContextAccessor();
         }
 
 
@@ -91,6 +95,9 @@ namespace CommerceAPI
             app.UseRouting();
 
             _logger.Info("Configuring middleware pipeline...");
+
+            // Add the Correlation ID Middleware
+            app.UseMiddleware<Middleware.CorrelationIdMiddleware>();
 
             // Add Basic Authentication Middleware
             app.UseMiddleware<Middleware.BasicAuthenticationMiddleware>();
