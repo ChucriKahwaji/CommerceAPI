@@ -76,7 +76,8 @@ namespace API
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                //app.UseDeveloperExceptionPage();
+                app.UseMiddleware<Middleware.GlobalExceptionHandlingMiddleware>();
                 // Enable Swagger middleware
                 app.UseSwagger(c =>
                 {
