@@ -1,5 +1,8 @@
-﻿using log4net;
+﻿using CommerceEntities.Entities;
+using DataAccess.Configuration;
+using log4net;
 using log4net.Config;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 namespace API
@@ -28,6 +31,12 @@ namespace API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddDbContext<CommerceContext>(options => 
+            options.UseMySql(Configuration.GetConnectionString("DefaultConnection"), new MySqlServerVersion(new Version(8, 0, 21))));
+
+            // Configure repositories
+            services.ConfigureRepositories();
+
             services.AddEndpointsApiExplorer();
 
             // Add Swagger services
