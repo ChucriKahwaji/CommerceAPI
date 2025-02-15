@@ -1,5 +1,4 @@
 ﻿using API.Exceptions;
-using System.Net;
 using System.Text.Json;
 
 namespace API.Middleware
