@@ -1,13 +1,13 @@
-﻿using CommerceEntities.Entities;
+﻿using BusinessLogic.Models;
 
 namespace BusinessLogic.Interfaces
 {
     public interface IOrderService
     {
-        Task<IEnumerable<Order>> GetAllOrdersAsync();
-        Task<Order> GetOrderByIdAsync(int id);
-        Task AddOrderAsync(Order order);
-        Task UpdateOrderAsync(Order order);
+        Task<IEnumerable<OrderModel>> GetAllOrdersAsync();
+        Task<OrderModel> GetOrderByIdAsync(int id);
+        Task AddOrderAsync(OrderModel order);
+        Task UpdateOrderAsync(OrderModel order);
         Task DeleteOrderAsync(int id);
     }
 }

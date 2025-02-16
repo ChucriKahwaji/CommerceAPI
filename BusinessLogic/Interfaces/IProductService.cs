@@ -1,13 +1,14 @@
-﻿using CommerceEntities.Entities;
+﻿using BusinessLogic.Models;
+using CommerceEntities.Entities;
 
 namespace BusinessLogic.Interfaces
 {
     public interface IProductService
     {
-        Task<IEnumerable<Product>> GetAllProductsAsync();
-        Task<Product> GetProductByIdAsync(int id);
-        Task AddProductAsync(Product product);
-        Task UpdateProductAsync(Product product);
+        Task<IEnumerable<ProductModel>> GetAllProductsAsync();
+        Task<ProductModel> GetProductByIdAsync(int id);
+        Task AddProductAsync(ProductModel product);
+        Task UpdateProductAsync(ProductModel product);
         Task DeleteProductAsync(int id);
     }
 }

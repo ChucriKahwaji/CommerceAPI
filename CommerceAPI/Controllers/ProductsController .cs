@@ -1,33 +1,59 @@
-﻿using API.Exceptions;
-using log4net;
+﻿using BusinessLogic.Interfaces;
+using BusinessLogic.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Controllers
+namespace CommerceAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class ProductsController : ControllerBase
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(ProductsController));
+        private readonly IProductService _productService;
 
-        [HttpGet(Name = "GetProducts")]
-        public IActionResult GetProducts(int id)
+        public ProductsController(IProductService productService)
         {
-            Logger.Info("GET /api/products called");
+            _productService = productService;
+        }
 
-            if (id <= 0)
-                throw new ValidationException("The product ID must be greater than zero.");
+        [HttpGet]
+        public async Task<IActionResult> GetProducts()
+        {
+            var products = await _productService.GetAllProductsAsync();
+            return Ok(products);
+        }
 
-            if (id == 999)
-                throw new UnauthorizedException("You are not authorized to view this product.");
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetProductById(int id)
+        {
+            var product = await _productService.GetProductByIdAsync(id);
+            if (product == null)
+                return NotFound();
 
-            if (id == 888)
-                throw new ForbiddenException("Access to this product is forbidden.");
+            return Ok(product);
+        }
 
-            if (id != 1) // Assume only product ID 1 exists for this example
-                throw new NotFoundException($"Product with ID {id} was not found.");
+        [HttpPost]
+        public async Task<IActionResult> AddProduct([FromBody] ProductModel product)
+        {
+            await _productService.AddProductAsync(product);
+            return CreatedAtAction(nameof(GetProductById), new { id = product.Id }, product);
+        }
 
-            return Ok(new { Message = "Products fetched successfully." });
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateProduct(int id, [FromBody] ProductModel product)
+        {
+            if (id != product.Id)
+                return BadRequest();
+
+            await _productService.UpdateProductAsync(product);
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProduct(int id)
+        {
+            await _productService.DeleteProductAsync(id);
+            return NoContent();
         }
     }
 }

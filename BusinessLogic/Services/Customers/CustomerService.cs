@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.Interfaces;
+using BusinessLogic.Models;
 using CommerceEntities.Entities;
 using DataAccess.Interfaces;
 using log4net;
@@ -15,28 +16,71 @@ namespace BusinessLogic.Services.Customers
             _customerRepository = customerRepository;
         }
 
-        public async Task<IEnumerable<Customer>> GetAllCustomersAsync()
+        public async Task<IEnumerable<CustomerModel>> GetAllCustomersAsync()
         {
             _logger.Info("Fetching all customers from service.");
-            return await _customerRepository.GetAllCustomersAsync();
+            var customers = await _customerRepository.GetAllCustomersAsync();
+
+            // Convert Entities → Business Models
+            return customers.Select(c => new CustomerModel
+            {
+                Id = c.Id,
+                FirstName = c.FirstName,
+                LastName = c.LastName,
+                Email = c.Email,
+                CreatedAt = c.CreatedAt
+            }).ToList();
         }
 
-        public async Task<Customer> GetCustomerByIdAsync(int id)
+        public async Task<CustomerModel> GetCustomerByIdAsync(int id)
         {
             _logger.Info($"Fetching customer with ID: {id} from service.");
-            return await _customerRepository.GetCustomerByIdAsync(id);
+            var customer = await _customerRepository.GetCustomerByIdAsync(id);
+
+            return customer == null ? null : new CustomerModel
+            {
+                Id = customer.Id,
+                FirstName = customer.FirstName,
+                LastName = customer.LastName,
+                Email = customer.Email,
+                CreatedAt = customer.CreatedAt
+            };
         }
 
-        public async Task AddCustomerAsync(Customer customer)
+        public async Task AddCustomerAsync(CustomerModel customerModel)
         {
             _logger.Info("Adding new customer from service.");
-            await _customerRepository.AddCustomerAsync(customer);
+
+            // Convert Business Model → Entity
+            var customerEntity = new Customer
+            {
+                FirstName = customerModel.FirstName,
+                LastName = customerModel.LastName,
+                Email = customerModel.Email,
+                CreatedAt = customerModel.CreatedAt
+            };
+
+            await _customerRepository.AddCustomerAsync(customerEntity);
+
+            // Assign the generated ID to the model
+            customerModel.Id = customerEntity.Id;
         }
 
-        public async Task UpdateCustomerAsync(Customer customer)
+        public async Task UpdateCustomerAsync(CustomerModel customerModel)
         {
-            _logger.Info($"Updating customer with ID: {customer.Id} from service.");
-            await _customerRepository.UpdateCustomerAsync(customer);
+            _logger.Info($"Updating customer with ID: {customerModel.Id} from service.");
+
+            // Convert Business Model → Entity
+            var customerEntity = new Customer
+            {
+                Id = customerModel.Id,
+                FirstName = customerModel.FirstName,
+                LastName = customerModel.LastName,
+                Email = customerModel.Email,
+                CreatedAt = customerModel.CreatedAt
+            };
+
+            await _customerRepository.UpdateCustomerAsync(customerEntity);
         }
 
         public async Task DeleteCustomerAsync(int id)
