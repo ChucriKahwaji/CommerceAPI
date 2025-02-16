@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.Interfaces;
+using BusinessLogic.Models;
 using CommerceEntities.Entities;
 using DataAccess.Interfaces;
 using log4net;
@@ -15,28 +16,65 @@ namespace BusinessLogic.Services.Products
             _productRepository = productRepository;
         }
 
-        public async Task<IEnumerable<Product>> GetAllProductsAsync()
+        public async Task<IEnumerable<ProductModel>> GetAllProductsAsync()
         {
             _logger.Info("Fetching all products from service.");
-            return await _productRepository.GetAllProductsAsync();
+            var products = await _productRepository.GetAllProductsAsync();
+
+            // Convert Entities → Business Models
+            return products.Select(p => new ProductModel
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Price = p.Price,
+                CreatedAt = p.CreatedAt
+            }).ToList();
         }
 
-        public async Task<Product> GetProductByIdAsync(int id)
+        public async Task<ProductModel> GetProductByIdAsync(int id)
         {
             _logger.Info($"Fetching product with ID: {id} from service.");
-            return await _productRepository.GetProductByIdAsync(id);
+            var product = await _productRepository.GetProductByIdAsync(id);
+
+            return product == null ? null : new ProductModel
+            {
+                Id = product.Id,
+                Name = product.Name,
+                Price = product.Price,
+                CreatedAt = product.CreatedAt
+            };
         }
 
-        public async Task AddProductAsync(Product product)
+        public async Task AddProductAsync(ProductModel productModel)
         {
             _logger.Info("Adding new product from service.");
-            await _productRepository.AddProductAsync(product);
+
+            // Convert Business Model → Entity
+            var productEntity = new Product
+            {
+                Name = productModel.Name,
+                Price = productModel.Price,
+                CreatedAt = productModel.CreatedAt
+            };
+
+            await _productRepository.AddProductAsync(productEntity);
+            productModel.Id = productEntity.Id;
         }
 
-        public async Task UpdateProductAsync(Product product)
+        public async Task UpdateProductAsync(ProductModel productModel)
         {
-            _logger.Info($"Updating product with ID: {product.Id} from service.");
-            await _productRepository.UpdateProductAsync(product);
+            _logger.Info($"Updating product with ID: {productModel.Id} from service.");
+
+            // Convert Business Model → Entity
+            var productEntity = new Product
+            {
+                Id = productModel.Id,
+                Name = productModel.Name,
+                Price = productModel.Price,
+                CreatedAt = productModel.CreatedAt
+            };
+
+            await _productRepository.UpdateProductAsync(productEntity);
         }
 
         public async Task DeleteProductAsync(int id)
