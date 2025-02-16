@@ -1,4 +1,5 @@
-﻿using CommerceEntities.Entities;
+﻿using BusinessLogic.Configuration;
+using CommerceEntities.Entities;
 using DataAccess.Configuration;
 using log4net;
 using log4net.Config;
@@ -33,6 +34,9 @@ namespace API
             services.AddControllers();
             services.AddDbContext<CommerceContext>(options => 
             options.UseMySql(Configuration.GetConnectionString("DefaultConnection"), new MySqlServerVersion(new Version(8, 0, 21))));
+
+            // Configure the Business Logic Services
+            services.ConfigureServices();  
 
             // Configure repositories
             services.ConfigureRepositories();
