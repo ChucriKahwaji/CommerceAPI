@@ -2,6 +2,7 @@
 using DataAccess.Repositories.Customers;
 using DataAccess.Repositories.Orders;
 using DataAccess.Repositories.Products;
+using DataAccess.Repositories.Reports;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DataAccess.Configuration
@@ -13,6 +14,7 @@ namespace DataAccess.Configuration
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IReportRepository, ReportRepository>();
         }
     }
 }

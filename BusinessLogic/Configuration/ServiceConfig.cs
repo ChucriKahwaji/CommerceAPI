@@ -2,6 +2,7 @@
 using BusinessLogic.Services.Customers;
 using BusinessLogic.Services.Orders;
 using BusinessLogic.Services.Products;
+using BusinessLogic.Services.Reports;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BusinessLogic.Configuration
@@ -13,6 +14,7 @@ namespace BusinessLogic.Configuration
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<ICustomerService, CustomerService>();
             services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IReportService, ReportService>();
         }
     }
 }
