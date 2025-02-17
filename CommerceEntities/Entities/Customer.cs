@@ -1,4 +1,7 @@
-﻿namespace CommerceEntities.Entities;
+﻿using System;
+using System.Collections.Generic;
+
+namespace CommerceEntities.Entities;
 
 public partial class Customer
 {
@@ -11,6 +14,8 @@ public partial class Customer
     public string Email { get; set; } = null!;
 
     public DateTime? CreatedAt { get; set; }
+
+    public bool? IsDeleted { get; set; }
 
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 }
